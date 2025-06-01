@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Phone Track</string>
     <string name="title_text">Welcome to %1$s</string>
-    <string name="welcome_text_p1">Welcome to my phone tracking app! If you are unsure of what\'s going on, please go to\ </string>
-    <string name="welcome_text_link">my website\ </string>
-    <string name="welcome_text_p2">for more information.</string>
+    <string name="welcome_text_p1">Welcome to my phone tracking app! For more information on how to use this app, please go to\ </string>
+    <string name="welcome_text_link">my website.</string>
 </resources>
