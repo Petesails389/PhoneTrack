@@ -24,7 +24,12 @@ class HomeViewModel(
         when(event) {
             HomeEvent.SaveTrackProfile -> {
                 viewModelScope.launch {
-                    dao.upsertProfile(TrackProfile("Test Profile", "Test User", 1))
+                    dao.upsertProfile(TrackProfile("Test Profile", "Test User", 1, "peter.thesparrows.net/maps/senddata.php"))
+                }
+            }
+            is HomeEvent.DeleteTrackProfile -> {
+                viewModelScope.launch {
+                    dao.delete(event.trackProfile)
                 }
             }
             is HomeEvent.setDisplayName -> TODO()
