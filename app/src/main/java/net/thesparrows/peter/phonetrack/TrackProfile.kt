@@ -3,15 +3,17 @@ package net.thesparrows.peter.phonetrack
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.serialization.descriptors.PrimitiveKind
 
 @Entity
 data class TrackProfile(
-    @ColumnInfo(name = "display_name") val displayName: String,
-    @ColumnInfo(name = "user_name") val userName: String,
-    @ColumnInfo(name = "map_id") val mapID: Int,
-    @ColumnInfo(name = "web_address") val webAddress: String,
-    @ColumnInfo(name = "location_duration") val locationDuration: Int = 0,
-    @ColumnInfo(name = "upload_duration") val uploadDuration: Int = 300,
+    @ColumnInfo(name = "display_name") var displayName: String,
+    @ColumnInfo(name = "user_name") var userName: String,
+    @ColumnInfo(name = "map_id") var mapID: Int,
+    @ColumnInfo(name = "web_address") var webAddress: String,
+    @ColumnInfo(name = "location_duration") var locationDuration: Int = 0,
+    @ColumnInfo(name = "upload_duration") var uploadDuration: Int = 300,
+    @ColumnInfo(name = "running") var running: Boolean = true,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0
 )
