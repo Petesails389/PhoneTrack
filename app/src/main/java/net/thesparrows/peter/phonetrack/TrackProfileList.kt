@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -65,10 +66,12 @@ fun TrackProfileList(
                         append(stringResource(R.string.welcome_text_link))
                     }
                 },
+                modifier = Modifier.padding(8.dp)
             )
             state.profileList.forEach { trackProfile ->
                 TrackProfile(trackProfile, onEvent)
             }
+            Spacer(Modifier.height(64.dp))
         }
     }
 }
@@ -120,7 +123,7 @@ fun TrackProfile(trackProfile: TrackProfile, onEvent: (HomeEvent) -> Unit) {
                     }
                     Column{
                         Text(
-                            text = trackProfile.userName,
+                            text = trackProfile.username,
                             style = MaterialTheme.typography.bodyMedium,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,

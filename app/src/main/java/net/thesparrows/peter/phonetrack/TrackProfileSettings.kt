@@ -2,26 +2,34 @@ package net.thesparrows.peter.phonetrack
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.maxLength
+import androidx.compose.foundation.text.input.then
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Link
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material.icons.filled.Title
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TextFieldLabelPosition
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -29,7 +37,6 @@ fun TrackProfileSettings (
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
 ){
-    val defaultTrackProfile = TrackProfile("New Profile", "UserName", 1, "Web Address")
 
     Box(
         Modifier
@@ -38,65 +45,94 @@ fun TrackProfileSettings (
             .verticalScroll(rememberScrollState()))
     {
         Column {
-            OutlinedTextField(
-                value = state.currentTrackProfile?.displayName ?: defaultTrackProfile.displayName,
-                onValueChange = { onEvent(HomeEvent.SetDisplayName(it)) },
+            TextField(
+                state = state.displayName,
+                labelPosition = TextFieldLabelPosition.Above(),
                 label = {
-                    Text(
-                        text = "Display Name:",
-                        style = MaterialTheme.typography.titleSmall
+                    Row (verticalAlignment = Alignment.CenterVertically){
+                        Icon(Icons.Default.Title, contentDescription = "Title Icon")
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = "Display Name:",
+                            style = MaterialTheme.typography.titleMedium
                         )
-                        },
+                    }
+                },
                 textStyle = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
+                contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(top = 4.dp, bottom = 4.dp, start = 8.dp, end = 8.dp),
+                colors = textFieldColors(),
                 modifier = Modifier.fillMaxWidth()
                     .padding(8.dp)
             )
-            OutlinedTextField(
-                value = state.currentTrackProfile?.webAddress ?: defaultTrackProfile.webAddress,
-                onValueChange = { onEvent(HomeEvent.SetWebAddress(it)) },
+            TextField(
+                state = state.webAddress,
+                labelPosition = TextFieldLabelPosition.Above(),
                 label = {
-                    Text(
-                        text = "Web Address:",
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                    Row (verticalAlignment = Alignment.CenterVertically){
+                        Icon(Icons.Filled.Link, contentDescription = "Title Icon")
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = "Web Adress:",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
                 },
                 textStyle = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
+                contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(top = 4.dp, bottom = 4.dp, start = 8.dp, end = 8.dp),
+                colors = textFieldColors(),
                 modifier = Modifier.fillMaxWidth()
                     .padding(8.dp)
             )
-            OutlinedTextField(
-                value = state.currentTrackProfile?.userName ?: defaultTrackProfile.userName,
-                onValueChange = { onEvent(HomeEvent.SetUserName(it)) },
+            TextField(
+                state = state.username,
+                labelPosition = TextFieldLabelPosition.Above(),
                 label = {
-                    Text(
-                        text = "User Name:",
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                    Row (verticalAlignment = Alignment.CenterVertically){
+                        Icon(Icons.Default.Person, contentDescription = "Title Icon")
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = "Username:",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
                 },
                 textStyle = MaterialTheme.typography.bodyLarge,
-                maxLines = 1,
+                contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(top = 4.dp, bottom = 4.dp, start = 8.dp, end = 8.dp),
+                colors = textFieldColors(),
                 modifier = Modifier.fillMaxWidth()
                     .padding(8.dp)
             )
-            var mapID by remember { mutableStateOf<Int?>(1) }
-            OutlinedTextField(
-                value = (mapID ?: "").toString(),
-                onValueChange = {
-                    mapID = it.toIntOrNull()
-                    onEvent(HomeEvent.SetMapID(mapID ?: state.currentTrackProfile?.mapID ?: 0))
-                },
+            TextField(
+                state = state.mapID,
+                labelPosition = TextFieldLabelPosition.Above(),
                 label = {
-                    Text(
-                        text = "User Name:",
-                        style = MaterialTheme.typography.titleSmall
-                    )
+                    Row (verticalAlignment = Alignment.CenterVertically){
+                        Icon(Icons.Default.Tag, contentDescription = "Title Icon")
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = "Map ID:",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
                 },
+                inputTransformation = DigitOnlyInputTransformation().then(InputTransformation.maxLength(6)),
                 textStyle = MaterialTheme.typography.bodyLarge,
+                contentPadding = TextFieldDefaults.contentPaddingWithoutLabel(top = 4.dp, bottom = 4.dp, start = 8.dp, end = 8.dp),
+                colors = textFieldColors(),
                 keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
                 modifier = Modifier.padding(8.dp)
             )
         }
     }
 }
+
+@Composable
+fun textFieldColors(): TextFieldColors = TextFieldDefaults.colors(
+    cursorColor = MaterialTheme.colorScheme.primary,
+    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+    unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
+    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+    focusedTextColor = MaterialTheme.colorScheme.secondary,
+    focusedLabelColor = MaterialTheme.colorScheme.onBackground,
+    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+)
