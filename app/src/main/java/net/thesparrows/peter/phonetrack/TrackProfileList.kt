@@ -65,10 +65,12 @@ fun TrackProfileList(
                         append(stringResource(R.string.welcome_text_link))
                     }
                 },
+                modifier = Modifier.padding(8.dp)
             )
             state.profileList.forEach { trackProfile ->
                 TrackProfile(trackProfile, onEvent)
             }
+            Spacer(Modifier.height(64.dp))
         }
     }
 }
@@ -120,7 +122,7 @@ fun TrackProfile(trackProfile: TrackProfile, onEvent: (HomeEvent) -> Unit) {
                     }
                     Column{
                         Text(
-                            text = trackProfile.userName,
+                            text = trackProfile.username,
                             style = MaterialTheme.typography.bodyMedium,
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
