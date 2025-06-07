@@ -1,41 +1,55 @@
 package net.thesparrows.peter.phonetrack
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import net.thesparrows.peter.phonetrack.HomeEvent.*
+import net.thesparrows.peter.phonetrack.ui.theme.Theme
 
 class HomeViewModel(
-    private val dao : TrackProfileDao
+    private val dao : TrackProfileDao,
+    private val dataStore: DataStore<Preferences>,
 ) : ViewModel() {
+
+    //settings
+    private val _theme: Flow<String> = dataStore.data.map { preferences ->
+        preferences[SettingsKeys().theme] ?: "DEFAULT"
+    }
 
     private val _trackProfiles = dao.getAll()
     private val _state = MutableStateFlow(HomeState())
-    val state = combine(_state, _trackProfiles) {state, trackProfiles ->
+    val state = combine(_state, _trackProfiles, _theme) {state, trackProfiles, theme ->
         state.copy(
-            profileList = trackProfiles
+            profileList = trackProfiles,
+            theme = Theme.valueOf(theme)
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), HomeState())
 
     fun onEvent(event: HomeEvent) {
         when(event) {
-            is HomeEvent.DeleteTrackProfile -> {
+            is DeleteTrackProfile -> {
                 viewModelScope.launch {
                     dao.delete(event.trackProfile)
                 }
             }
-            is HomeEvent.ToggleTrackProfile -> {
+            is ToggleTrackProfile -> {
                 viewModelScope.launch {
                     var updatedTrackProfile: TrackProfile = event.trackProfile.copy(running = !event.trackProfile.running)
                     dao.upsertProfile(updatedTrackProfile)
                 }
             }
-            is HomeEvent.UpdateTrackProfile -> {
+            is UpdateTrackProfile -> {
                 var currentTrackProfile = _state.value.currentTrackProfile
                 if (currentTrackProfile != null){
                     viewModelScope.launch {
@@ -57,10 +71,10 @@ class HomeViewModel(
                         }
                     }
                 } else {
-                    onEvent(HomeEvent.EditProfile(TrackProfile("New Profile", "Username", 1, "Web.Address")))
+                    onEvent(EditProfile(TrackProfile("New Profile", "Username", 1, "Web.Address")))
                 }
             }
-            is HomeEvent.EditProfile -> {
+            is EditProfile -> {
                 _state.update {
                     it.copy(
                         currentTrackProfile = event.trackProfile,
@@ -69,6 +83,35 @@ class HomeViewModel(
                         username = TextFieldState(initialText = event.trackProfile?.username ?: ""),
                         mapID = TextFieldState(initialText = (event.trackProfile?.mapID ?: "").toString()),
                     )
+                }
+            }
+            ToggleSettings -> {
+                _state.update {
+                    it.copy(
+                        inSettings = !_state.value.inSettings
+                    )
+                }
+            }
+
+            ToggleThemeDropdown -> {
+                _state.update {
+                    it.copy(
+                        themeDropDown = !_state.value.themeDropDown
+                    )
+                }
+            }
+
+            is SetTheme -> {
+                viewModelScope.launch {
+                    dataStore.edit { settings ->
+                        settings[SettingsKeys().theme] = event.theme.toString()
+                    }
+                }.invokeOnCompletion {
+                    _state.update {
+                        it.copy(
+                            themeDropDown = false
+                        )
+                    }
                 }
             }
         }

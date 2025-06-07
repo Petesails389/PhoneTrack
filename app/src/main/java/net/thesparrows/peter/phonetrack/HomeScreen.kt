@@ -18,19 +18,29 @@ fun HomeScreen(
     state: HomeState,
     onEvent: (HomeEvent) -> Unit
 ) {
-    PhoneTrackTheme {
+    PhoneTrackTheme(state = state) {
         Scaffold(
             topBar = {
                 TopBar(state, onEvent)
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = {
-                    onEvent(HomeEvent.UpdateTrackProfile)
-                }) {
-                    if (state.currentTrackProfile != null) {
-                        Icon(imageVector = Icons.Default.Done, contentDescription = "Save Track Profile")
-                    } else {
-                        Icon(imageVector = Icons.Default.Add, contentDescription = "Add Track Profile")
+                if (!state.inSettings) {
+                    FloatingActionButton(onClick = {
+                        onEvent(HomeEvent.UpdateTrackProfile)
+                    }) {
+                        if (state.currentTrackProfile != null) {
+                            Icon(
+                                imageVector = Icons.Default.Done,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                contentDescription = "Save Track Profile"
+                            )
+                        } else {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                contentDescription = "Add Track Profile"
+                            )
+                        }
                     }
                 }
             },
@@ -38,7 +48,10 @@ fun HomeScreen(
             containerColor = MaterialTheme.colorScheme.background,
         ) {
             Box (Modifier.padding(it)) {
-                if(state.currentTrackProfile != null) {
+                if(state.inSettings){
+                    MainSettings(state, onEvent)
+                }
+                else if(state.currentTrackProfile != null) {
                     TrackProfileSettings(state, onEvent)
                 } else {
                     TrackProfileList(state, onEvent)

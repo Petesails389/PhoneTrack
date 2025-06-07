@@ -23,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TextFieldLabelPosition
 import androidx.compose.runtime.Composable
@@ -31,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import net.thesparrows.peter.phonetrack.ui.theme.textFieldColors
 
 @Composable
 fun TrackProfileSettings (
@@ -72,7 +72,7 @@ fun TrackProfileSettings (
                         Icon(Icons.Filled.Link, contentDescription = "Title Icon")
                         Spacer(Modifier.width(4.dp))
                         Text(
-                            text = "Web Adress:",
+                            text = "Web Address:",
                             style = MaterialTheme.typography.titleMedium
                         )
                     }
@@ -125,14 +125,3 @@ fun TrackProfileSettings (
         }
     }
 }
-
-@Composable
-fun textFieldColors(): TextFieldColors = TextFieldDefaults.colors(
-    cursorColor = MaterialTheme.colorScheme.primary,
-    unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-    unfocusedLabelColor = MaterialTheme.colorScheme.onBackground,
-    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-    focusedTextColor = MaterialTheme.colorScheme.secondary,
-    focusedLabelColor = MaterialTheme.colorScheme.onBackground,
-    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-)
