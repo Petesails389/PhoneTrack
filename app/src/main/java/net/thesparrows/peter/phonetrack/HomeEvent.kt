@@ -10,5 +10,6 @@ sealed interface HomeEvent {
     object ToggleThemeDropdown: HomeEvent
     data class SetTheme(val theme: Theme): HomeEvent
     data class EditProfile(val trackProfile: TrackProfile?): HomeEvent
-    
+    object DismissDialog: HomeEvent
+    data class PermissionResult(val permission: String, val isGranted: Boolean): HomeEvent
 }

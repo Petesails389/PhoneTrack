@@ -1,5 +1,6 @@
 package net.thesparrows.peter.phonetrack
 
+import android.app.Activity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -16,7 +17,8 @@ import net.thesparrows.peter.phonetrack.ui.theme.PhoneTrackTheme
 @Composable
 fun HomeScreen(
     state: HomeState,
-    onEvent: (HomeEvent) -> Unit
+    onEvent: (HomeEvent) -> Unit,
+    activity: Activity,
 ) {
     PhoneTrackTheme(state = state) {
         Scaffold(
@@ -49,7 +51,7 @@ fun HomeScreen(
         ) {
             Box (Modifier.padding(it)) {
                 if(state.inSettings){
-                    MainSettings(state, onEvent)
+                    MainSettings(state, onEvent, activity)
                 }
                 else if(state.currentTrackProfile != null) {
                     TrackProfileSettings(state, onEvent)

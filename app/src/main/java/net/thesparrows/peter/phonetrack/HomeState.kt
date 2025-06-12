@@ -18,4 +18,7 @@ data class HomeState(
     val inSettings: Boolean = false,
     val themeDropDown: Boolean = false,
     val theme: Theme = Theme.DEFAULT,
+    val permissionDialogQueue: List<String> = listOf<String>(),
+    val locationPermission: Boolean = false,
+    val notificationPermission: Boolean = false,
 )

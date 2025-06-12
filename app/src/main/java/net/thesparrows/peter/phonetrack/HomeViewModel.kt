@@ -1,6 +1,10 @@
 package net.thesparrows.peter.phonetrack
 
+import android.Manifest
+import android.content.Context
+import android.os.Build
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -20,6 +24,7 @@ import net.thesparrows.peter.phonetrack.ui.theme.Theme
 class HomeViewModel(
     private val dao : TrackProfileDao,
     private val dataStore: DataStore<Preferences>,
+    applicationContext: Context,
 ) : ViewModel() {
 
     //settings
@@ -28,7 +33,14 @@ class HomeViewModel(
     }
 
     private val _trackProfiles = dao.getAll()
-    private val _state = MutableStateFlow(HomeState())
+    private val _state = MutableStateFlow(HomeState(
+        locationPermission = checkSelfPermission(applicationContext,Manifest.permission.ACCESS_FINE_LOCATION) == 0,
+        notificationPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU){
+            checkSelfPermission(applicationContext,Manifest.permission.POST_NOTIFICATIONS) == 0
+        } else {
+            true
+        }
+    ))
     val state = combine(_state, _trackProfiles, _theme) {state, trackProfiles, theme ->
         state.copy(
             profileList = trackProfiles,
@@ -38,17 +50,20 @@ class HomeViewModel(
 
     fun onEvent(event: HomeEvent) {
         when(event) {
+
             is DeleteTrackProfile -> {
                 viewModelScope.launch {
                     dao.delete(event.trackProfile)
                 }
             }
+
             is ToggleTrackProfile -> {
                 viewModelScope.launch {
                     var updatedTrackProfile: TrackProfile = event.trackProfile.copy(running = !event.trackProfile.running)
                     dao.upsertProfile(updatedTrackProfile)
                 }
             }
+
             is UpdateTrackProfile -> {
                 var currentTrackProfile = _state.value.currentTrackProfile
                 if (currentTrackProfile != null){
@@ -74,6 +89,7 @@ class HomeViewModel(
                     onEvent(EditProfile(TrackProfile("New Profile", "Username", 1, "Web.Address")))
                 }
             }
+
             is EditProfile -> {
                 _state.update {
                     it.copy(
@@ -85,6 +101,7 @@ class HomeViewModel(
                     )
                 }
             }
+
             ToggleSettings -> {
                 _state.update {
                     it.copy(
@@ -111,6 +128,40 @@ class HomeViewModel(
                         it.copy(
                             themeDropDown = false
                         )
+                    }
+                }
+            }
+
+            DismissDialog -> {
+                _state.update {
+                    it.copy(
+                        permissionDialogQueue = _state.value.permissionDialogQueue.take(_state.value.permissionDialogQueue.lastIndex)
+                    )
+                }
+            }
+
+            is PermissionResult -> {
+                if (!event.isGranted) {
+                    _state.update {
+                        it.copy(
+                            permissionDialogQueue = listOf(event.permission) + _state.value.permissionDialogQueue,
+                        )
+                    }
+                }
+                when (event.permission) {
+                    Manifest.permission.ACCESS_FINE_LOCATION -> {
+                        _state.update {
+                            it.copy(
+                                locationPermission = event.isGranted
+                            )
+                        }
+                    }
+                    Manifest.permission.POST_NOTIFICATIONS -> {
+                        _state.update {
+                            it.copy(
+                                notificationPermission = event.isGranted
+                            )
+                        }
                     }
                 }
             }

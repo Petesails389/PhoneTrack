@@ -36,7 +36,6 @@ fun TopBar(
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                        //tint = MaterialTheme.colorScheme.onPrimaryContainer,
                         contentDescription = "Localized description"
                     )
                 }

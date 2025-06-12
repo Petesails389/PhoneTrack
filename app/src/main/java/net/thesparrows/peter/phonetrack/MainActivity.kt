@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
                     @Suppress("UNCHECKED_CAST")
-                    return HomeViewModel(db.dao, applicationContext.dataStore) as T
+                    return HomeViewModel(db.dao, applicationContext.dataStore, applicationContext) as T
                 }
             }
         }
@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val state by viewModel.state.collectAsState()
-            HomeScreen(state = state, onEvent = viewModel::onEvent)
+            HomeScreen(state, viewModel::onEvent, this)
         }
     }
 }
