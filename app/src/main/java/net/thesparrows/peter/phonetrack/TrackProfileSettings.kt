@@ -1,5 +1,7 @@
 package net.thesparrows.peter.phonetrack
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +21,7 @@ import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.Title
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -36,6 +39,7 @@ import net.thesparrows.peter.phonetrack.ui.theme.textFieldColors
 fun TrackProfileSettings (
     state: HomeState,
     onEvent: (HomeEvent) -> Unit,
+    context: Context,
 ){
 
     Box(
@@ -45,6 +49,24 @@ fun TrackProfileSettings (
             .verticalScroll(rememberScrollState()))
     {
         Column {
+            if (state.currentTrackProfile?.running == true) {
+                Button(onClick = {
+                    val serviceIntent: Intent = Intent(context, TrackService::class.java).apply {
+                        action = TrackService.Actions.START.toString()
+                    }
+                    context.startService(serviceIntent)
+                }) {
+                    Text ("Start Profile")
+                }
+                Button(onClick = {
+                    val serviceIntent: Intent = Intent(context, TrackService::class.java).apply {
+                        action = TrackService.Actions.STOP.toString()
+                    }
+                    context.startService(serviceIntent)
+                }) {
+                    Text ("Stop Profile")
+                }
+            }
             TextField(
                 state = state.displayName,
                 labelPosition = TextFieldLabelPosition.Above(),

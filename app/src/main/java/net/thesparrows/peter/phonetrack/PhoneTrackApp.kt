@@ -17,7 +17,6 @@ class PhoneTrackApp: Application() {
                 NotificationManager.IMPORTANCE_HIGH
             )
             val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-
             notificationManager.createNotificationChannel(channel)
         }
     }
