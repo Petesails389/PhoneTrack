@@ -3,13 +3,19 @@ package net.thesparrows.peter.phonetrack
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities.TRANSPORT_WIFI
 
 
 class WiFiStateReceiver: BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if(intent.action == "android.net.conn.CONNECTIVITY_CHANGE" || intent.action == "android.net.wifi.WIFI_STATE_CHANGED") {
-            Log.d("Debug", "ReceivedBroadcast")
+        if(intent.action == "android.net.conn.CONNECTIVITY_CHANGE") {
+            val connectivityManager = context.getSystemService(ConnectivityManager::class.java)
+            val capabilities = connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
+            val hasWifi = capabilities?.hasTransport(TRANSPORT_WIFI) == true
+
+            val service: TrackService = context as TrackService
+            service.setRunning(!hasWifi)
         }
     }
 
