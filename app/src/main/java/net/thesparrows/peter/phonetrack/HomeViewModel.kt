@@ -2,6 +2,7 @@ package net.thesparrows.peter.phonetrack
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.core.content.ContextCompat.checkSelfPermission
@@ -24,7 +25,7 @@ import net.thesparrows.peter.phonetrack.ui.theme.Theme
 class HomeViewModel(
     private val dao : TrackProfileDao,
     private val dataStore: DataStore<Preferences>,
-    applicationContext: Context,
+    private val applicationContext: Context,
 ) : ViewModel() {
 
     //settings
@@ -61,6 +62,15 @@ class HomeViewModel(
                 viewModelScope.launch {
                     var updatedTrackProfile: TrackProfile = event.trackProfile.copy(running = !event.trackProfile.running)
                     dao.upsertProfile(updatedTrackProfile)
+
+                    val serviceIntent: Intent = Intent(applicationContext, TrackService::class.java).apply {
+                        action = if (updatedTrackProfile.running) {
+                            TrackService.Actions.START.toString()
+                        } else {
+                            TrackService.Actions.STOP.toString()
+                        }
+                    }
+                    applicationContext.startService(serviceIntent)
                 }
             }
 

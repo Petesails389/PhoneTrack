@@ -12,7 +12,7 @@ data class TrackProfile(
     @ColumnInfo(name = "web_address") var webAddress: String,
     @ColumnInfo(name = "location_duration") var locationDuration: Int = 0,
     @ColumnInfo(name = "upload_duration") var uploadDuration: Int = 300,
-    @ColumnInfo(name = "running") var running: Boolean = true,
+    @ColumnInfo(name = "running") var running: Boolean = false,
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0
 )

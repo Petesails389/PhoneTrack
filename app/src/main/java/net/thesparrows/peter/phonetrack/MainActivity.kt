@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             val state by viewModel.state.collectAsState()
-            HomeScreen(state, viewModel::onEvent, this, applicationContext)
+            HomeScreen(state, viewModel::onEvent, this)
         }
     }
 }
